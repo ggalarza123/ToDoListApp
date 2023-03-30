@@ -1,5 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todolistapp/authscreen/authscreen.dart';
+
+// geo
+// fake@gmail.com
+// 1234geo1234G!
 
 class Authform extends StatefulWidget {
   const Authform({super.key});
@@ -18,7 +24,29 @@ class AuthFormState extends State<Authform> {
 
   authenticate() {
     final validity = _formkey.currentState!.validate();
-    print(userNameController.text);
+
+    if (validity) {
+      _formkey.currentState!.save();
+      submitForm(emailController.text,passwordController.text, userNameController.text);
+    }
+
+  }
+
+  submitForm(String email, String password, String username) async {
+    final auth = FirebaseAuth.instance;
+    UserCredential authResult;
+    try {
+      if (isLoginPage) {
+        authResult = await auth.signInWithEmailAndPassword(
+            email: email, password: password);
+      } else {
+        authResult = await auth.createUserWithEmailAndPassword(email: email, password: password);
+        String uid = authResult.user!.uid;
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({username: username, email:email});
+      }
+    } catch (error) {
+      print(error);
+    }
   }
 
   @override
@@ -100,10 +128,12 @@ class AuthFormState extends State<Authform> {
                       onPressed: () {
                         authenticate();
                       },
-                      child: isLoginPage ? Text('Login') : Text('Signup'),
+                      child: isLoginPage
+                          ? const Text('Login')
+                          : const Text('Signup'),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   TextButton(
@@ -112,11 +142,10 @@ class AuthFormState extends State<Authform> {
                         isLoginPage = !isLoginPage;
                       });
                     },
-                    // is loginpage changes the state
                     child: isLoginPage
-                        ? Text('Not a member')
-                        : Text('Already a member?'),
-                  ),
+                        ? const Text('Not a Member?')
+                        : const Text('Already a Member?'),
+                  )
                 ],
               ),
             ),

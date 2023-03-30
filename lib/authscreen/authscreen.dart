@@ -8,6 +8,9 @@ class AuthScreen extends StatefulWidget {
 
 // Pretty much every state will return a widget
 class _authScreenState extends State<AuthScreen> {
+
+
+
   @override
   Widget build(BuildContext context) {
     // Scaffold holds pretty much the app bar and the body of a page
