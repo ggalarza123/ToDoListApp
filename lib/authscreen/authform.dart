@@ -2,70 +2,81 @@ import 'package:flutter/material.dart';
 import 'package:todolistapp/authscreen/authscreen.dart';
 
 class Authform extends StatefulWidget {
+  const Authform({super.key});
   @override
-  _authFormState createState() => _authFormState();
+  AuthFormState createState() => AuthFormState();
 }
 
-class _authFormState extends State<Authform> {
+class AuthFormState extends State<Authform> {
   final _formkey = GlobalKey<FormState>();
-  var _email = "";
-  var _password = "";
+
+  final userNameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final emailController = TextEditingController();
+
   bool isLoginPage = false;
+
+  authenticate() {
+    final validity = _formkey.currentState!.validate();
+    print(userNameController.text);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // whenever there is a list. example ListView, their will either be children or child, most likely children
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: ListView(
         children: [
           Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Form(
               key: _formkey,
               child: Column(
                 children: [
                   if (!isLoginPage)
                     TextFormField(
-                        key: ValueKey('username'),
-                        keyboardType: TextInputType.name,
-                        // validates this TextFormField and makes sure it is not empty
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Username is required.';
-                          } else {
-                            return null;
-                          }
-                        },
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Enter UserName")),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                      key: ValueKey('email'),
-                      keyboardType: TextInputType.emailAddress,
-                      // validates this TextFormField and makes sure it is not empty
+                      controller: userNameController,
+                      keyboardType: TextInputType.name,
+                      key: const ValueKey('username'),
                       validator: (value) {
-                        final bool emailValid = RegExp(
-                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                            .hasMatch(value!);
-                        if (!emailValid) {
-                          return "Enter valid email address";
+                        if (value!.isEmpty) {
+                          return 'username is required';
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "Enter Email Address")),
-                  SizedBox(
+                          labelText: "Enter UserName"),
+                    ),
+                  const SizedBox(
                     height: 10,
                   ),
                   TextFormField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    key: const ValueKey('email'),
+                    validator: (value) {
+                      final bool emailValid = RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(value!);
+                      if (!emailValid) {
+                        return "Enter valid email address";
+                      }
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: "Enter Email Address"),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: passwordController,
                     keyboardType: TextInputType.visiblePassword,
-                    key: ValueKey('password'),
+                    obscureText: true,
+                    key: const ValueKey('password'),
                     validator: (value) {
                       final bool emailValid = RegExp(
                               r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
@@ -75,20 +86,20 @@ class _authFormState extends State<Authform> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: "Enter Password"),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
-                  // this can be read as if this is the log in page, test should be log in, otherwise sign up
-                  Container(
+                  SizedBox(
                     height: 60,
-                    // this means use 100% of the width
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        authenticate();
+                      },
                       child: isLoginPage ? Text('Login') : Text('Signup'),
                     ),
                   ),
