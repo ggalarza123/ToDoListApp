@@ -27,9 +27,9 @@ class AuthFormState extends State<Authform> {
 
     if (validity) {
       _formkey.currentState!.save();
-      submitForm(emailController.text,passwordController.text, userNameController.text);
+      submitForm(emailController.text, passwordController.text,
+          userNameController.text);
     }
-
   }
 
   submitForm(String email, String password, String username) async {
@@ -40,9 +40,13 @@ class AuthFormState extends State<Authform> {
         authResult = await auth.signInWithEmailAndPassword(
             email: email, password: password);
       } else {
-        authResult = await auth.createUserWithEmailAndPassword(email: email, password: password);
+        authResult = await auth.createUserWithEmailAndPassword(
+            email: email, password: password);
         String uid = authResult.user!.uid;
-        await FirebaseFirestore.instance.collection('users').doc(uid).set({username: username, email:email});
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .set({username: username, email: email});
       }
     } catch (error) {
       print(error);
